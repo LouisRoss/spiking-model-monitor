@@ -1,0 +1,11 @@
+#!/bin/bash
+echo $(pwd)
+docker container run \
+-it \
+--rm \
+--name=model-monitor \
+-v "$(pwd)":/app \
+-v "$(pwd)"/../spiking-model-configuration/configuration/:/app/public/configuration \
+-p 8083:3000 \
+louisross/spiking-model-monitor:1.0 \
+bash
