@@ -1,0 +1,46 @@
+{
+  "neuroncount": 1300,
+  "templates":
+  [
+    {
+      "name": "ten-by-ten",
+      "indexes":
+      {
+        "input":  { "index": 0,    "count": 100 },
+        "x":      { "index": 100,  "count": 100 },
+        "y":      { "index": 200,  "count": 100 },
+        "output": { "index": 300,  "count": 100 }
+      }
+    },
+    {
+      "name": "ten-by-ten",
+      "indexes":
+      {
+        "input":  { "index": 400,  "count": 100 },
+        "x":      { "index": 500,  "count": 100 },
+        "y":      { "index": 600,  "count": 100 },
+        "output": { "index": 700,  "count": 100 }
+      }
+    },
+    {
+      "name": "five-by-five",
+      "indexes":
+      {
+        "input":  { "index": 800,  "count": 25 },
+        "x":      { "index": 825,  "count": 25 },
+        "y":      { "index": 850,  "count": 25 },
+        "output": { "index": 875,  "count": 25 }
+      }
+    },
+    {
+      "name": "ten-by-ten",
+      "indexes":
+      {
+        "input":  { "index": 900,  "count": 100 },
+        "x":      { "index": 1000, "count": 100 },
+        "y":      { "index": 1100, "count": 100 },
+        "output": { "index": 1200, "count": 100 }
+      }
+    }
+  ]
+}

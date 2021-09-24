@@ -6,6 +6,7 @@ docker container run \
 --name=model-monitor \
 -v "$(pwd)":/app \
 -v "$(pwd)"/../spiking-model-configuration/configuration/:/app/public/configuration \
+-v "$(pwd)"/../spiking-model-configuration/src/:/app/src/configuration \
 -p 8083:3000 \
 louisross/spiking-model-monitor:1.0 \
 bash
