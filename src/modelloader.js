@@ -83,12 +83,11 @@ class ModelLoader {
   layoutSquare(count, startPosition, color) {
     const [startX, startY, startZ] = startPosition;
     var layout = [];
-    if (count % 2 == 0) {
-      var limits = { lowerLimit: 1, upperLimit: 0, movement: squareMovement.XZBUMP };
-      var position = [ 1, 1 ];
-    } else {
-      var limits = { lowerLimit: 0, upperLimit: 0, movement: squareMovement.ZDEC };
-      var position = [ 0, 1 ];
+    var limits = { lowerLimit: 0, upperLimit: 0, movement: squareMovement.ZDEC };
+    var position = [ 0, 1 ];
+    if (count % 2 === 0) {
+      limits = { lowerLimit: 1, upperLimit: 0, movement: squareMovement.XZBUMP };
+      position = [ 1, 1 ];
     }
 
     while (layout.length < count) {
@@ -133,6 +132,7 @@ class ModelLoader {
         }
         break;
       case squareMovement.XZBUMP:
+      default:
         limits.lowerLimit -= 1;
         limits.upperLimit += 1;
         x = z = limits.lowerLimit;
