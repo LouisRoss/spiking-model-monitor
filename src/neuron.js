@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import React, { useRef } from 'react';
 
-const Neuron = ({position, index, color, tetrahedron, mountTrigger}) => {
+const Neuron = ({position, index, color, tetrahedron, mountTrigger, handleClick}) => {
   const fireColor = new THREE.Color(1, 0, 0);
   const baseColor = new THREE.Color(color);
   const normalOpacity = 0.3;
@@ -28,7 +28,7 @@ const Neuron = ({position, index, color, tetrahedron, mountTrigger}) => {
   const zRot = /*Math.PI/2*/0;
 
   return (
-    <mesh onClick={trigger} position={position} >
+    <mesh onClick={() => { handleClick(index); }} position={position} >
       <mesh castShadow geometry={tetrahedron} rotation={[-xRot, zRot, yRot]}>
         <meshStandardMaterial attach='material' color={baseColor} opacity={normalOpacity} transparent ref={mesh1Ref} />
       </mesh>

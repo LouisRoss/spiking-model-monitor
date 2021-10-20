@@ -3,10 +3,10 @@ import React, { useRef, useState, useEffect } from 'react';
 import { useParams, BrowserRouter as Router, Route } from 'react-router-dom';
 import { Canvas, useFrame } from "@react-three/fiber";
 import { softShadows, MeshWobbleMaterial, OrbitControls, useHelper } from '@react-three/drei';
-import { useSpring, a } from "@react-spring/three";
 
 import { Neuron } from './neuron';
 import { ModelLoader } from './modelloader';
+import { Configuration } from './configuration/configuration.js';
 
 import './App.scss';
 
@@ -36,42 +36,77 @@ const Neurons = () => {
 
   const tetrahedron = new THREE.TetrahedronBufferGeometry(1);
   
-  const [neurons, setNeurons] = useState([]);
+  const neurons = useRef([]);
+  const [initialized, setInitialized] = useState(false);
+  const baseRealtimeShimUrl = useRef(null);
+  const socket = useRef(null);
 
   useEffect(() => {
+    /*
+    Configuration.getInstance(config => {
+      const configuration = config;
+      const realtimeShimHost = configuration.services.realtimeShim.host;
+      const realtimeShimPort = configuration.services.realtimeShim.port;
+      baseRealtimeShimUrl.current = 'http://' + realtimeShimHost + ':' + realtimeShimPort;
+      console.log(`Using ${baseRealtimeShimUrl.current} to fetch realtime records`);
+    });
+    */
+  
     const loader = new ModelLoader(model);
-    loader.LoadConfiguration(models => { console.log(models); setNeurons(models); });
-  }, []);
+    loader.LoadConfiguration(models => {
+      console.log(models);
+      neurons.current = models;
+      // TODO - get address from configuration.
+      socket.current = new WebSocket('ws://192.168.1.150:5003');
+      socket.current.onopen = function () {
+        console.log(`Opened websocket with ws://192.168.1.150:5003`);
+        setInitialized(true);
+      };
 
-  const TriggerNeuron = (index) => {
-    if (index < neurons.length) {
-      if(neurons[index].trigger) {
-        neurons[index].trigger();
+      socket.current.onmessage = function (message) {
+        console.log(`Received websocket message ${message.data}`);
+        const spikes = JSON.parse(message.data);
+        spikes.forEach(spike => {
+          const index = spike[1];
+          console.log(`Triggering neuron ${index} of ${neurons.current.length}`);
+          if (index < neurons.current.length) {
+            if(neurons.current[index].trigger) {
+              neurons.current[index].trigger();
+            }
+          }
+        });
+      };
+
+      socket.current.onerror = function (error) {
+          console.log('WebSocket error: ' + error);
+      };
+    });
+  }, [model]);
+
+  const SendSpike = (index) => {
+    if (initialized) {
+      console.log(`Sending spike for neuron ${index}`);
+
+      if (socket.current) {
+        socket.current.send(JSON.stringify([[0, index]]));
       }
     }
-
-    index++;
-    if (index >= neurons.length) { 
-      index = 0;
-    }
-
-    return index;
   }
 
   const captureTrigger = (trigger, index) => {
-    neurons[index].trigger = trigger;
+    neurons.current[index].trigger = trigger;
   }
 
   return (
     <>
-      <FiringTest trigger={TriggerNeuron}/>
-      {neurons.map((props, index) => (
-        <Neuron position={props.position} color={props.color} mountTrigger={captureTrigger} key={index} index={index} tetrahedron={tetrahedron} />
+      {neurons.current.map((props, index) => (
+        <Neuron position={props.position} color={props.color} mountTrigger={captureTrigger} key={index} index={index} tetrahedron={tetrahedron} handleClick={SendSpike} />
       ))}
     </>
   )
 }
 
+/*
 const FiringTest = ({ trigger }) => {
   var nexti = 0;
   var frameCount = 30;
@@ -89,6 +124,7 @@ const FiringTest = ({ trigger }) => {
     </>
   )
 }
+*/
 
 const Light = () => {
   const lightRef = useRef();
