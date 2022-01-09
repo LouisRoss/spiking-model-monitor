@@ -1,3 +1,4 @@
+import './App.scss';
 import * as THREE from 'three';
 import React, { useRef, useState, useEffect } from 'react';
 import { useParams, BrowserRouter as Router, Route } from 'react-router-dom';
@@ -6,29 +7,11 @@ import { softShadows, MeshWobbleMaterial, OrbitControls, useHelper } from '@reac
 
 import { Neuron } from './neuron';
 import { ModelLoader } from './modelloader';
-import { Configuration } from './configuration/configuration.js';
+import configuration from './configfiles/configuration.json';
+const baseRealtimeShimUrl = configuration.services.realtimeShim.host + ':' + configuration.services.realtimeShim.wsport;
 
-import './App.scss';
 
 softShadows();
-/*
-const SpinningMesh = ({position, args, color, speed}) => {
-  const mesh = useRef()
-  useFrame(() => (mesh.current.rotation.x = mesh.current.rotation.y += 0.04));
-
-  const [expand, setExpand] = useState(false);
-  const props = useSpring({
-    scale: expand ? [1.4,1.4,1.4]: [1,1,1],
-  })
-
-  return (
-    <a.mesh onClick={() => setExpand(!expand)} scale={props.scale} castShadow position={position} ref={mesh}>
-      <boxBufferGeometry attach='geometry' args={args} />
-      <MeshWobbleMaterial attach='material' color={color} speed={speed} factor={0.6} />
-    </a.mesh>
-  );
-}
-*/
 
 const Neurons = () => {
   let { model } = useParams();
@@ -38,28 +21,16 @@ const Neurons = () => {
   
   const neurons = useRef([]);
   const [initialized, setInitialized] = useState(false);
-  const baseRealtimeShimUrl = useRef(null);
   const socket = useRef(null);
 
   useEffect(() => {
-    /*
-    Configuration.getInstance(config => {
-      const configuration = config;
-      const realtimeShimHost = configuration.services.realtimeShim.host;
-      const realtimeShimPort = configuration.services.realtimeShim.port;
-      baseRealtimeShimUrl.current = 'http://' + realtimeShimHost + ':' + realtimeShimPort;
-      console.log(`Using ${baseRealtimeShimUrl.current} to fetch realtime records`);
-    });
-    */
-  
     const loader = new ModelLoader(model);
     loader.LoadConfiguration(models => {
       console.log(models);
       neurons.current = models;
-      // TODO - get address from configuration.
-      socket.current = new WebSocket('ws://192.168.1.150:5003');
+      socket.current = new WebSocket('ws://' + baseRealtimeShimUrl);
       socket.current.onopen = function () {
-        console.log(`Opened websocket with ws://192.168.1.150:5003`);
+        console.log(`Opened websocket with ws://${baseRealtimeShimUrl}`);
         setInitialized(true);
       };
 
