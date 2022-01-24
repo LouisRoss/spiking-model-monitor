@@ -1,4 +1,4 @@
-import { Configuration } from './configuration/configuration.js';
+import configuration from './configfiles/configuration.json';
 
 const squareMovement = {
   XINC: "xinc",
@@ -26,32 +26,12 @@ class ModelLoader {
 
     this.movement = squareMovement.XINC;
 
-    this.configuration = null;
-    this.packagerHost = "";
-    this.packagerPort = "";
-    this.basePackagerUrl = "";
-  }
-
-  LoadConfiguration(modelHandler) {
-    if (!this.configuration) {
-      Configuration.getInstance(configuration => {
-        this.configuration = configuration;
-        this.extractConfiguration(modelHandler);
-      });
-    } else {
-      this.extractConfiguration(modelHandler);
-    }
-  }
-
-  extractConfiguration(modelHandler) {
-    this.packagerHost = this.configuration.services.modelPackager.host;
-    this.packagerPort = this.configuration.services.modelPackager.port;
+    this.packagerHost = configuration.services.modelPackager.host;
+    this.packagerPort = configuration.services.modelPackager.port;
     this.basePackagerUrl = this.packagerHost + ':' + this.packagerPort;
-
-    this.fetchModels(modelHandler);
   }
 
-  fetchModels(modelHandler) {
+  Initialize(modelHandler) {
     fetch(this.basePackagerUrl + '/model/' + this.modelName + '/population', { method: 'GET', mode: 'cors' })
     .then(data => data.json())
     .then(response => {

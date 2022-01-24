@@ -25,7 +25,7 @@ const Neurons = () => {
 
   useEffect(() => {
     const loader = new ModelLoader(model);
-    loader.LoadConfiguration(models => {
+    loader.Initialize(models => {
       console.log(models);
       neurons.current = models;
       socket.current = new WebSocket('ws://' + baseRealtimeShimUrl);
@@ -35,11 +35,11 @@ const Neurons = () => {
       };
 
       socket.current.onmessage = function (message) {
-        console.log(`Received websocket message ${message.data}`);
+        //console.log(`Received websocket message ${message.data}`);
         const spikes = JSON.parse(message.data);
         spikes.forEach(spike => {
           const index = spike[1];
-          console.log(`Triggering neuron ${index} of ${neurons.current.length}`);
+          //console.log(`Triggering neuron ${index} of ${neurons.current.length}`);
           if (index < neurons.current.length) {
             if(neurons.current[index].trigger) {
               neurons.current[index].trigger();
