@@ -42,7 +42,8 @@ class ModelLoader {
       for (var template of response.templates) {
         console.log(template);
         for (var layer in template.indexes) {
-          layout = layout.concat(this.layoutSquare(template.indexes[layer].count, startPosition, colors[colorIndex]));
+          //layout = layout.concat(this.layoutSquare(template.indexes[layer].count, startPosition, colors[colorIndex]));
+          layout = layout.concat(this.layoutRasterSquare(template.indexes[layer].shape, startPosition, colors[colorIndex]));
           startPosition[1] += 2;
         }
         startPosition[1] = 0;
@@ -58,6 +59,34 @@ class ModelLoader {
         modelHandler(layout);
       }
     });
+  }
+
+  layoutRasterSquare(dimensions, startPosition, color) {
+    const [startX, startY, startZ] = startPosition;
+    const [maxX, maxZ] = dimensions;
+
+    var lowX = maxX / -2;
+    var highX = maxX / 2;
+    if (maxX %2 !== 0) {
+      lowX = (maxX - 1) / -2;
+      highX = (maxX + 1) / 2;
+    }
+
+    var lowZ = maxZ / -2;
+    var highZ = maxZ / 2;
+    if (maxZ %2 !== 0) {
+      lowZ = (maxZ - 1) / -2;
+      highZ = (maxZ + 1) / 2;
+    }
+
+    var layout = [];
+    for (var z = lowZ; z < highZ; z++) {
+      for (var x = lowX; x < highX; x++) {
+        layout.push({ position: [startX + (x * 2), startY, startZ + (z * 2)], color: color, trigger: null });
+      }
+    }
+
+    return layout;
   }
 
   layoutSquare(count, startPosition, color) {
