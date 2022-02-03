@@ -2,8 +2,8 @@ import * as THREE from 'three';
 import React, { useRef } from 'react';
 
 const Neuron = ({position, index, color, tetrahedron, mountTrigger, handleClick}) => {
-  const fireColor = new THREE.Color(1, 0, 0);
-  const baseColor = new THREE.Color(color);
+  const fireColor = new THREE.Color(/*1, 0, 0*/color);
+  const baseColor = new THREE.Color(/*color*/0x144414);
   const normalOpacity = 0.3;
   const mesh1Ref = useRef();
   //const mesh2Ref = useRef();
