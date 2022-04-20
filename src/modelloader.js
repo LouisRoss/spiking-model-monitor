@@ -1,3 +1,4 @@
+import { isCompositeComponent } from 'react-dom/cjs/react-dom-test-utils.production.min';
 import configuration from './configfiles/configuration.json';
 
 const colors = [
@@ -27,12 +28,23 @@ class ModelLoader {
     .then(response => {
 
       var layout = [];
+      var layerHandles = [];
       var startPosition = [0, 0, 0];
       var colorIndex = 0;
+      var handleOffset = -1 * response.templates.length;
       for (var template of response.templates) {
         console.log(template);
+        const widths = Object.keys(template.indexes).map(layer => template.indexes[layer].shape[0]);
+        const handleSideOffset = Math.max(...widths) + 4;
+
         for (var layer in template.indexes) {
+          const startingNeuron = layout.length;
           layout = layout.concat(this.layoutRasterSquare(template.indexes[layer].shape, startPosition, colors[colorIndex]));
+          const engingNeuron = layout.length;
+
+          layerHandles.push({ position: [handleSideOffset, startPosition[1], startPosition[2] + handleOffset], color: colors[colorIndex], range: [startingNeuron, engingNeuron] });
+          handleOffset += 2;
+
           startPosition[1] += 2;
 
           colorIndex++;
@@ -46,7 +58,7 @@ class ModelLoader {
       }
 
       if (modelHandler) {
-        modelHandler(layout);
+        modelHandler(layout, layerHandles);
       }
     });
   }
