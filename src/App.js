@@ -72,6 +72,9 @@ const App = () => {
  */
   return (
     <>
+      <section>
+      <div>
+      <div>
       <Canvas shadows colorManagement camera={{position: [-5, 2, 50], fov: 100}}>
         <Router>
           <Route path='/:model' children={<Neurons />} />
@@ -79,6 +82,9 @@ const App = () => {
         <Light />
         <OrbitControls />
       </Canvas>
+      </div>
+      </div>
+      </section>
     </>
   );
 }

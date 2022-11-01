@@ -9,6 +9,7 @@ WORKDIR /app
 COPY ["./package.json", "./package-lock.json", "/app/"]
 
 RUN ls
+RUN ["npm", "install", "-g", "npm@8.7.0"]
 #RUN npm install --production
 RUN ["npm", "install"]
 
